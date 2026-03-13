@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title and meta are updated dynamically by JS -->
+  <title>Product — Hijabi Baddie | jabiworld.com</title>
+  <meta name="description" content="Shop Hijabi Baddie at jabiworld.com">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Snipcart CSS -->
+  <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.3.3/default/snipcart.css">
+
+  <!-- Site Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announce-bar">
+    Free shipping $75+ &nbsp;·&nbsp; jabiworld.com &nbsp;·&nbsp; Ships worldwide
+  </div>
+
+  <!-- ========== NAV ========== -->
+  <nav>
+    <a href="index.html">
+      <img class="nav-logo-img" src="images/img_logo_hijabi2.jpeg" alt="Hijabi Baddie">
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#shop">Shop</a></li>
+      <li><a href="index.html#collections">Collections</a></li>
+      <li><a href="index.html#lookbook">Lookbook</a></li>
+      <li><a href="index.html#story">Our Story</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="snipcart-checkout">Bag (<span class="snipcart-items-count">0</span>)</button>
+    </div>
+  </nav>
+
+  <!-- ========== PRODUCT DETAIL PAGE ========== -->
+  <div class="product-detail-page">
+
+    <!-- Back link -->
+    <a href="index.html" class="back-link">← Back to Shop</a>
+
+    <!-- Loading state -->
+    <div id="product-loading" style="padding:60px;text-align:center;color:var(--gray);letter-spacing:3px;font-size:11px;text-transform:uppercase;">
+      Loading product...
+    </div>
+
+    <!-- Error state (hidden by default) -->
+    <div id="product-error" style="display:none;padding:60px;text-align:center;">
+      <p style="color:var(--gray);letter-spacing:2px;font-size:12px;">Product not found.</p>
+      <a href="index.html" class="btn-primary" style="display:inline-block;margin-top:24px;">Back to Shop</a>
+    </div>
+
+    <!-- Product layout (populated by JS) -->
+    <div class="product-detail-layout" id="product-detail" style="display:none;">
+
+      <!-- LEFT: Gallery -->
+      <div class="product-gallery" id="product-gallery">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- RIGHT: Info + Cart -->
+      <div class="product-detail-info" id="product-info">
+        <!-- Populated by JS -->
+      </div>
+
+    </div>
+
+    <!-- Related products section -->
+    <section class="section" id="related-section" style="display:none;">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="sub">— You May Also Like</span>
+          More Drops
+        </h2>
+      </div>
+      <div class="product-grid" id="related-grid"></div>
+    </section>
+
+  </div><!-- end product-detail-page -->
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <img class="footer-logo-img" src="images/img_logo_hijabi2.jpeg" alt="Hijabi Baddie">
+        <div class="footer-domain">jabiworld.com</div>
+        <p class="footer-tagline">Muslim streetwear. Made with faith.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Help</div>
+        <ul class="footer-links">
+          <li><a href="#">Shipping & Returns</a></li>
+          <li><a href="#">Size Guide</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">Collaborations</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Hijabi Baddie / jabiworld.com</span>
+      <div class="footer-bottom-right">
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== SNIPCART ========== -->
+  <!--
+    Replace YOUR_SNIPCART_PUBLIC_API_KEY with your real key from snipcart.com
+  -->
+  <div
+    hidden
+    id="snipcart"
+    data-api-key="YOUR_SNIPCART_PUBLIC_API_KEY"
+    data-config-modal-style="side"
+  ></div>
+  <script async src="https://cdn.snipcart.com/themes/v3.3.3/default/snipcart.js"></script>
+
+  <!-- Site Scripts -->
+  <script src="script.js"></script>
+
+  <!-- ========== PRODUCT DETAIL LOGIC ========== -->
+  <script>
+    /**
+     * product.html is a reusable template.
+     * It reads ?id=product-id from the URL, fetches products.json,
+     * finds the matching product, and renders the detail page.
+     *
+     * To link to a product page:  product.html?id=patience-hoodie-pink
+     * The id must match the "id" field in products.json
+     */
+    async function renderProductDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      const loadingEl = document.getElementById('product-loading');
+      const errorEl = document.getElementById('product-error');
+      const detailEl = document.getElementById('product-detail');
+      const relatedSection = document.getElementById('related-section');
+
+      if (!id) {
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        const product = await getProduct(id);
+
+        if (!product) {
+          loadingEl.style.display = 'none';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // Update page title & meta
+        document.title = `${product.name} — Hijabi Baddie | jabiworld.com`;
+        document.querySelector('meta[name="description"]').content =
+          product.description || `Shop ${product.name} at jabiworld.com`;
+
+        // Build gallery
+        const gallery = document.getElementById('product-gallery');
+        const images = [product.imageFront, product.imageBack].filter(Boolean);
+        const thumbsHTML = images.length > 1
+          ? `<div class="product-gallery-thumbs">
+               ${images.map((img, i) => `
+                 <div class="thumb${i === 0 ? ' active' : ''}" onclick="switchGalleryImage(this, '${imgSrc(img)}')">
+                   <img src="${imgSrc(img)}" alt="${product.name}">
+                 </div>`).join('')}
+             </div>`
+          : '';
+
+        gallery.innerHTML = `
+          <div class="product-gallery-main">
+            <img id="gallery-main-img" src="${imgSrc(product.imageFront)}" alt="${product.name}">
+          </div>
+          ${thumbsHTML}
+        `;
+
+        // Build product info
+        const actualPrice = product.salePrice || product.price;
+        const priceHTML = product.salePrice
+          ? `<span class="sale">${formatPrice(product.price)}</span>${formatPrice(product.salePrice)}`
+          : formatPrice(product.price);
+
+        const info = document.getElementById('product-info');
+        info.innerHTML = `
+          <div class="product-detail-tag">${product.tag || product.category}</div>
+          <h1 class="product-detail-name">${product.name}</h1>
+          <div class="product-detail-price">${priceHTML}</div>
+          <p class="product-detail-desc">${product.description || ''}</p>
+
+          ${buildSizeRow(product.sizes)}
+
+          <!--
+            SNIPCART ADD TO CART BUTTON
+            data-item-id        → unique product ID (from products.json)
+            data-item-price     → price in dollars (no $ sign)
+            data-item-name      → display name in cart
+            data-item-description → shown in cart sidebar
+            data-item-image     → product thumbnail in cart
+            data-item-url       → URL Snipcart crawls to verify price (must be publicly accessible)
+            data-item-custom1-name/value → size selection (set dynamically by selectSize())
+          -->
+          <button
+            class="add-to-cart-btn snipcart-add-item"
+            data-item-id="${product.id}"
+            data-item-price="${actualPrice}"
+            data-item-name="${product.name}"
+            data-item-description="${product.description || ''}"
+            data-item-image="${imgSrc(product.imageFront)}"
+            data-item-url="/products.json"
+            data-item-custom1-name="Size"
+            data-item-custom1-value="${product.sizes ? product.sizes[0] : 'One Size'}"
+          >Add to Bag — ${priceHTML}</button>
+
+          <div class="product-meta">
+            <span>Category: ${product.category}</span>
+            <span>${product.badge ? '· ' + product.badge : ''}</span>
+          </div>
+        `;
+
+        // Show layout
+        loadingEl.style.display = 'none';
+        detailEl.style.display = 'grid';
+
+        // Render related products (all except current)
+        const allProducts = await loadProducts();
+        const related = allProducts.filter(p => p.id !== id).slice(0, 3);
+        if (related.length > 0) {
+          document.getElementById('related-grid').innerHTML =
+            related.map(p => buildProductCard(p)).join('');
+          relatedSection.style.display = 'block';
+        }
+
+      } catch (err) {
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        console.error('Error rendering product:', err);
+      }
+    }
+
+    /** Switch the main gallery image when a thumbnail is clicked */
+    function switchGalleryImage(thumbEl, src) {
+      document.getElementById('gallery-main-img').src = src;
+      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+      thumbEl.classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderProductDetail);
+  </script>
+
+</body>
+</html>
