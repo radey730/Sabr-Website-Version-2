@@ -1,51 +1,58 @@
 [
   {
     "_comment": "HOW TO ADD A NEW PRODUCT:",
-    "_comment2": "1. Copy any product object below and paste it at the end of the array (before the closing ])",
+    "_comment2": "1. Copy any product object below and paste at the end of the array (before the closing ])",
     "_comment3": "2. Give it a unique 'id' (lowercase, hyphens only, e.g. 'my-new-hoodie')",
-    "_comment4": "3. Add your product image(s) to the /images folder",
-    "_comment5": "4. Set 'imageFront' and optionally 'imageBack' to the filename inside /images/",
+    "_comment4": "3. Add your image(s) to the /images folder",
+    "_comment5": "4. Set 'imageFront' — and optionally 'imageBack' for a hover front/back swap",
     "_comment6": "5. Set 'category' to one of: tees | hoodies | sets | new",
-    "_comment7": "6. Set 'badge' to a short label like '⚡ New' or 'Fan Fave', or leave as empty string ''",
-    "_comment8": "7. Set 'salePrice' to null if there is no sale, or a number like 110 for a sale price",
-    "_comment9": "8. 'description' shows on the product detail page",
-    "_comment10": "9. 'sizes' lists available sizes shown as buttons",
-    "_comment11": "DONE! The product will automatically appear on the homepage grid and get its own detail page."
+    "_comment7": "6. Set 'gender' to one of: womens | mens | all",
+    "_comment8": "   'womens' → appears in Women's section only",
+    "_comment9": "   'mens'   → appears in Men's section only",
+    "_comment10": "  'all'    → appears in both sections",
+    "_comment11": "7. Set 'salePrice' to null if no sale, or a number like 110 for a discounted price",
+    "_comment12": "8. 'featuredSize': 'large' makes the card span 2 rows (use for one hero product per section)",
+    "_comment13": "DONE! The product automatically appears in the correct gender section with its own detail page."
   },
+
   {
     "id": "stay-on-your-deen-tee",
     "name": "Stay On Your Deen Tee",
     "tag": "⚡ Bestseller",
     "category": "tees",
+    "gender": "all",
     "price": 38,
     "salePrice": null,
     "badge": "Bestseller",
     "imageFront": "img_tee_stay_deen.jpeg",
-    "imageBack": "img_tee_worry.jpeg",
+    "imageBack": null,
     "description": "A reminder to stay focused on what matters. Clean script on a heavyweight tee. Wear your deen on your chest.",
     "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": true,
     "featuredSize": "large"
   },
+
   {
     "id": "worry-about-yourself-tee",
     "name": "Worry About Yourself Tee",
     "tag": "Tee",
     "category": "tees",
+    "gender": "all",
     "price": 38,
     "salePrice": null,
     "badge": "",
     "imageFront": "img_tee_worry.jpeg",
-    "imageBack": "img_tee_stay_deen.jpeg",
-    "description": "Mind your own business — literally. The flip side of the Deen tee. Bold, unapologetic, 100% jabi energy.",
+    "imageBack": null,
+    "description": "Mind your own business — literally. Bold, unapologetic, 100% jabi energy.",
     "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": false
+    "featuredSize": null
   },
+
   {
-    "id": "patience-hoodie-pink",
+    "id": "patience-hoodie-pink-womens",
     "name": "Patience Hoodie — Hot Pink",
     "tag": "⚡ Limited",
     "category": "hoodies",
+    "gender": "womens",
     "price": 75,
     "salePrice": null,
     "badge": "Limited",
@@ -53,41 +60,63 @@
     "imageBack": "img_hoodie_pink-sleeve.jpeg",
     "description": "Hot pink. PATIENCE down the sleeve. Sabr calligraphy on the front. For the bold and the blessed.",
     "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": false
+    "featuredSize": null
   },
+
   {
-    "id": "patience-zip-hoodie-teal",
-    "name": "Patience Zip Hoodie — Teal",
+    "id": "patience-zip-hoodie-teal-womens",
+    "name": "Patience Zip Hoodie — Teal (Women's)",
     "tag": "Zip Hoodie",
     "category": "hoodies",
+    "gender": "womens",
+    "price": 78,
+    "salePrice": null,
+    "badge": "",
+    "imageFront": "teal_black_zip_women_sleeve.jpeg",
+    "imageBack": null,
+    "description": "Women's fit. Black zip hoodie with teal PATIENCE running down the sleeve.",
+    "sizes": ["XS", "S", "M", "L", "XL", "2X"],
+    "featuredSize": null
+  },
+
+  {
+    "id": "patience-zip-hoodie-teal-mens",
+    "name": "Patience Zip Hoodie — Teal (Men's)",
+    "tag": "Zip Hoodie",
+    "category": "hoodies",
+    "gender": "mens",
     "price": 78,
     "salePrice": null,
     "badge": "",
     "imageFront": "teal_black_zip_man_front.jpeg",
-    "imageBack": "teal_black_zip_women_sleeve.jpeg",
-    "description": "Black zip hoodie with teal Sabr calligraphy on front and PATIENCE running down the sleeve. Unisex fit.",
-    "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": false
+    "imageBack": null,
+    "description": "Men's fit. Black zip hoodie with teal Sabr calligraphy on the front.",
+    "sizes": ["S", "M", "L", "XL", "2X", "3X"],
+    "featuredSize": null
   },
+
   {
-    "id": "sabr-hoodie-black-red",
+    "id": "sabr-hoodie-black-red-mens",
     "name": "Sabr Hoodie — Black/Red",
     "tag": "Fan Fave",
     "category": "hoodies",
+    "gender": "mens",
     "price": 72,
     "salePrice": null,
     "badge": "Fan Fave",
     "imageFront": "black_hoodie_Red_text.jpeg",
     "imageBack": null,
     "description": "The OG. Black hoodie with red Sabr script. Spotted at Voice of Chester. This one started it all.",
-    "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": false
+    "sizes": ["S", "M", "L", "XL", "2X", "3X"],
+    "featuredSize": null
   },
+
   {
     "id": "sabr-sweatsuit-cream-red",
     "name": "Sabr Sweatsuit — Cream/Red",
     "tag": "Set",
     "category": "sets",
+    "gender": "all",
     "price": 130,
     "salePrice": 110,
     "badge": "Sale",
@@ -95,20 +124,22 @@
     "imageBack": null,
     "description": "Cream sweatsuit with red Sabr script. Hoodie + matching jogger pants. The full fit, waterfront ready.",
     "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": false
+    "featuredSize": null
   },
+
   {
     "id": "hijabi-baddie-graphic-hoodie",
     "name": "Hijabi Baddie Graphic Hoodie",
-    "tag": "New",
+    "tag": "⚡ New",
     "category": "new",
+    "gender": "womens",
     "price": 80,
     "salePrice": null,
-    "badge": "⚡ New",
+    "badge": "New",
     "imageFront": "img_hoodie_hijabi.jpeg",
     "imageBack": null,
-    "description": "The Hijabi Baddie signature hoodie. B&W photo print with Parental Advisory energy. This is the statement piece.",
+    "description": "The Hijabi Baddie signature hoodie. B&W photo print with Parental Advisory energy. The statement piece.",
     "sizes": ["XS", "S", "M", "L", "XL", "2X"],
-    "featured": false
+    "featuredSize": null
   }
 ]
