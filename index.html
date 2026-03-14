@@ -230,7 +230,7 @@
 <nav>
   <a href="index.html"><img class="nav-logo-img" src="images/img_logo_hijabi2.jpeg" alt="Hijabi Baddie"/></a>
   <ul class="nav-links">
-    <li><a href="#shop">Shop</a></li>
+    <li><a href="#shop-womens">Shop</a></li>
     <li><a href="#collections">Collections</a></li>
     <li><a href="#lookbook">Lookbook</a></li>
     <li><a href="#about">Our Story</a></li>
@@ -287,20 +287,33 @@
   </div>
 </div>
 
-<!-- ===== SHOP THE DROP =====
-  Product grid is built dynamically from products.json by the script at the bottom.
-  To add a new product: edit products.json only. No HTML changes needed here.
+<!-- ===== WOMEN'S =====
+  Populated from products.json where gender = "womens" or "all"
 -->
-<section id="shop">
+<section id="shop-womens">
   <div class="section-header">
-    <div class="section-title"><span class="sub">↳ Featured Products</span>SHOP<br>THE DROP</div>
-    <a href="#collections" class="section-link">View All →</a>
+    <div class="section-title"><span class="sub">↳ Women's Collection</span>WOMEN'S</div>
+    <a href="#shop-mens" class="section-link">Men's →</a>
   </div>
-  <div class="product-grid" id="product-grid">
-    <!-- Skeletons while products.json loads -->
+  <div class="product-grid" id="grid-womens">
     <div class="skeleton" style="grid-row:span 2;min-height:500px;"></div>
     <div class="skeleton" style="aspect-ratio:3/4;"></div>
     <div class="skeleton" style="aspect-ratio:3/4;"></div>
+    <div class="skeleton" style="aspect-ratio:3/4;"></div>
+    <div class="skeleton" style="aspect-ratio:3/4;"></div>
+  </div>
+</section>
+
+<!-- ===== MEN'S =====
+  Populated from products.json where gender = "mens" or "all"
+-->
+<section id="shop-mens" style="border-top:1px solid rgba(170,255,0,0.08);">
+  <div class="section-header">
+    <div class="section-title"><span class="sub">↳ Men's Collection</span>MEN'S</div>
+    <a href="#shop-womens" class="section-link">Women's ↑</a>
+  </div>
+  <div class="product-grid" id="grid-mens">
+    <div class="skeleton" style="grid-row:span 2;min-height:500px;"></div>
     <div class="skeleton" style="aspect-ratio:3/4;"></div>
     <div class="skeleton" style="aspect-ratio:3/4;"></div>
   </div>
@@ -336,7 +349,7 @@
         <div class="product-name">Sabr Hoodie — Black/Red</div>
         <div class="product-price">$72.00</div>
         <button class="quick-add snipcart-add-item"
-          data-item-id="sabr-hoodie-black-red"
+          data-item-id="sabr-hoodie-black-red-mens"
           data-item-price="72"
           data-item-name="Sabr Hoodie — Black/Red"
           data-item-description="The OG. Black hoodie with red Sabr script."
@@ -352,7 +365,7 @@
         <div class="product-name">Patience Zip — Teal</div>
         <div class="product-price">$78.00</div>
         <button class="quick-add snipcart-add-item"
-          data-item-id="patience-zip-hoodie-teal"
+          data-item-id="patience-zip-hoodie-teal-mens"
           data-item-price="78"
           data-item-name="Patience Zip Hoodie — Teal"
           data-item-description="Black zip hoodie with teal Sabr calligraphy."
@@ -381,7 +394,7 @@
           <div class="swatch active" style="background:#080808;"></div>
           <div class="swatch" style="background:#f0f0f0;border:1px solid rgba(255,255,255,0.2)"></div>
         </div>
-        <a href="#shop" class="btn-primary">Shop Tees</a>
+        <a href="#shop-womens" class="btn-primary">Shop Tees</a>
       </div>
     </div>
     <div class="featured-panel">
@@ -396,7 +409,8 @@
           <div class="swatch" style="background:#080808;"></div>
           <div class="swatch" style="background:#f5f0e8;border:1px solid rgba(255,255,255,0.15)"></div>
         </div>
-        <a href="#shop" class="btn-primary">Shop Hoodies</a>
+        <a href="#shop-womens" class="btn-primary">Shop Women's</a>
+        <a href="#shop-mens" class="btn-outline" style="margin-top:10px;">Shop Men's</a>
       </div>
     </div>
   </div>
@@ -540,77 +554,102 @@
   });
 </script>
 
-<!-- ===== DYNAMIC PRODUCT GRID =====
-  Reads products.json and builds the Shop the Drop grid.
-  Each card:
-    - Links to product.html?id=<id> for the full detail page
-    - Has a Snipcart .snipcart-add-item button with all required data attributes
-    - Front/back hover swap if the product has imageBack set
+<!-- ===== DYNAMIC PRODUCT GRIDS =====
+  Reads products.json and builds separate Women's and Men's grids.
+
+  Gender filtering:
+    gender: "womens" → Women's section only
+    gender: "mens"   → Men's section only
+    gender: "all"    → appears in BOTH sections
+
+  The first product in each section with featuredSize:"large" gets the tall hero card.
 
   TO ADD A NEW PRODUCT: edit products.json only. No code changes needed here.
 -->
 <script>
-  async function renderGrid() {
-    const grid = document.getElementById('product-grid');
+  /* Build one product card's HTML */
+  function buildCard(p, isLarge) {
+    const price = p.salePrice || p.price;
+    const priceHTML = p.salePrice
+      ? `<span class="sale">$${Number(p.price).toFixed(2)}</span>$${Number(p.salePrice).toFixed(2)}`
+      : `$${Number(p.price).toFixed(2)}`;
+
+    const imgBlock = p.imageBack
+      ? `<div class="img-spacer"></div>
+         <img class="img-front" src="images/${p.imageFront}" alt="${p.name}" loading="lazy"/>
+         <img class="img-back"  src="images/${p.imageBack}"  alt="${p.name}" loading="lazy"/>`
+      : `<img class="product-img" src="images/${p.imageFront}" alt="${p.name}" loading="lazy"
+              ${isLarge ? 'style="height:100%;object-fit:cover;object-position:center top;"' : ''}/>`;
+
+    const sizesHTML = (p.sizes || ['S','M','L','XL'])
+      .map((s, i) => `<button class="size-btn${i===0?' active':''}">${s}</button>`)
+      .join('');
+
+    return `
+      <div class="product-card${isLarge ? ' large' : ''}">
+        <a href="product.html?id=${p.id}" style="display:block;${p.imageBack ? 'position:relative;' : ''}">
+          ${imgBlock}
+        </a>
+        <div class="product-overlay">
+          <div class="product-tag">${p.tag || ''}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${priceHTML}</div>
+          <div class="sizes">${sizesHTML}</div>
+          <button class="quick-add snipcart-add-item"
+            data-item-id="${p.id}"
+            data-item-price="${price}"
+            data-item-name="${p.name}"
+            data-item-description="${(p.description||'').replace(/"/g,"'")}"
+            data-item-image="images/${p.imageFront}"
+            data-item-url="/products.json">Add to Bag</button>
+        </div>
+        <div class="product-info">
+          <div class="product-tag">${p.tag || p.category}</div>
+          <div class="product-name">
+            <a href="product.html?id=${p.id}">${p.name}</a>
+          </div>
+          <div class="product-price">${priceHTML}</div>
+        </div>
+      </div>`;
+  }
+
+  /* Render a filtered list of products into a grid element */
+  function renderSection(gridEl, products) {
+    if (!products.length) {
+      gridEl.innerHTML = '<p style="color:#666;padding:40px;grid-column:1/-1;font-size:11px;letter-spacing:2px;">No products in this section yet.</p>';
+      return;
+    }
+    // Only the first product with featuredSize:"large" gets the tall card
+    let usedLarge = false;
+    gridEl.innerHTML = products.map(p => {
+      const isLarge = !usedLarge && p.featuredSize === 'large';
+      if (isLarge) usedLarge = true;
+      return buildCard(p, isLarge);
+    }).join('');
+  }
+
+  async function renderGrids() {
     try {
       const res = await fetch('products.json');
       const raw = await res.json();
-      const products = raw.filter(p => p.id); // skip _comment entries
+      const all = raw.filter(p => p.id);
 
-      grid.innerHTML = products.map(p => {
-        const isLarge = p.featuredSize === 'large';
-        const price = p.salePrice || p.price;
-        const priceHTML = p.salePrice
-          ? `<span class="sale">$${Number(p.price).toFixed(2)}</span>$${Number(p.salePrice).toFixed(2)}`
-          : `$${Number(p.price).toFixed(2)}`;
+      const womens = all.filter(p => p.gender === 'womens' || p.gender === 'all');
+      const mens   = all.filter(p => p.gender === 'mens'   || p.gender === 'all');
 
-        // Use front/back swap if product has imageBack, otherwise single image
-        const imgBlock = p.imageBack
-          ? `<div class="img-spacer"></div>
-             <img class="img-front" src="images/${p.imageFront}" alt="${p.name}" loading="lazy"/>
-             <img class="img-back"  src="images/${p.imageBack}"  alt="${p.name}" loading="lazy"/>`
-          : `<img class="product-img" src="images/${p.imageFront}" alt="${p.name}" loading="lazy"
-                  ${isLarge ? 'style="height:100%;object-fit:cover;object-position:center top;"' : ''}/>`;
-
-        const sizesHTML = (p.sizes || ['S','M','L','XL'])
-          .map((s, i) => `<button class="size-btn${i===0?' active':''}">${s}</button>`)
-          .join('');
-
-        return `
-          <div class="product-card${isLarge ? ' large' : ''}">
-            <a href="product.html?id=${p.id}" style="display:block;${p.imageBack ? 'position:relative;' : ''}">
-              ${imgBlock}
-            </a>
-            <div class="product-overlay">
-              <div class="product-tag">${p.tag || ''}</div>
-              <div class="product-name">${p.name}</div>
-              <div class="product-price">${priceHTML}</div>
-              <div class="sizes">${sizesHTML}</div>
-              <button class="quick-add snipcart-add-item"
-                data-item-id="${p.id}"
-                data-item-price="${price}"
-                data-item-name="${p.name}"
-                data-item-description="${(p.description||'').replace(/"/g,"'")}"
-                data-item-image="images/${p.imageFront}"
-                data-item-url="/products.json">Add to Bag</button>
-            </div>
-            <div class="product-info">
-              <div class="product-tag">${p.tag || p.category}</div>
-              <div class="product-name">
-                <a href="product.html?id=${p.id}">${p.name}</a>
-              </div>
-              <div class="product-price">${priceHTML}</div>
-            </div>
-          </div>`;
-      }).join('');
+      renderSection(document.getElementById('grid-womens'), womens);
+      renderSection(document.getElementById('grid-mens'),   mens);
 
     } catch(err) {
-      grid.innerHTML = '<p style="color:#666;padding:40px;grid-column:1/-1;">Could not load products. Make sure products.json is in the same folder.</p>';
+      ['grid-womens','grid-mens'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<p style="color:#666;padding:40px;grid-column:1/-1;">Could not load products. Make sure products.json is in the same folder.</p>';
+      });
       console.error('Product grid error:', err);
     }
   }
 
-  renderGrid();
+  renderGrids();
 </script>
 
 </body>
