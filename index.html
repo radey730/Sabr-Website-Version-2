@@ -230,9 +230,10 @@
 <nav>
   <a href="index.html"><img class="nav-logo-img" src="images/img_logo_hijabi2.jpeg" alt="Hijabi Baddie"/></a>
   <ul class="nav-links">
-    <li><a href="#shop-womens">Shop</a></li>
+    <li><a href="#shop-womens">Women's</a></li>
+    <li><a href="#shop-mens">Men's</a></li>
+    <li><a href="#shop-kids">Kids</a></li>
     <li><a href="#collections">Collections</a></li>
-    <li><a href="#lookbook">Lookbook</a></li>
     <li><a href="#about">Our Story</a></li>
   </ul>
   <div class="nav-right">
@@ -315,6 +316,20 @@
   <div class="product-grid" id="grid-mens">
     <div class="skeleton" style="grid-row:span 2;min-height:500px;"></div>
     <div class="skeleton" style="aspect-ratio:3/4;"></div>
+    <div class="skeleton" style="aspect-ratio:3/4;"></div>
+  </div>
+</section>
+
+<!-- ===== KIDS =====
+  Populated from products.json where gender = "kids"
+-->
+<section id="shop-kids" style="border-top:1px solid rgba(170,255,0,0.08);">
+  <div class="section-header">
+    <div class="section-title"><span class="sub">↳ Little Jabis</span>KIDS</div>
+    <a href="#shop-womens" class="section-link">Women's ↑</a>
+  </div>
+  <div class="product-grid" id="grid-kids">
+    <div class="skeleton" style="grid-row:span 2;min-height:500px;"></div>
     <div class="skeleton" style="aspect-ratio:3/4;"></div>
   </div>
 </section>
@@ -521,7 +536,7 @@
   https://app.snipcart.com/dashboard/account/credentials
 -->
 <div hidden id="snipcart"
-  data-api-key="YOUR_SNIPCART_PUBLIC_API_KEY"
+  data-api-key="ZjVkNjQwMWYtNzJiMi00OWYwLWFkZDAtYmFjNjM2ZTJhMDA1NjM5MDkxMjI4MDc0NzUwMTky"
   data-config-modal-style="side">
 </div>
 <script async src="https://cdn.snipcart.com/themes/v3.3.3/default/snipcart.js"></script>
@@ -555,19 +570,17 @@
 </script>
 
 <!-- ===== DYNAMIC PRODUCT GRIDS =====
-  Reads products.json and builds separate Women's and Men's grids.
+  Reads products.json → filters by gender → builds Women's, Men's, and Kids grids.
 
-  Gender filtering:
-    gender: "womens" → Women's section only
-    gender: "mens"   → Men's section only
-    gender: "all"    → appears in BOTH sections
-
-  The first product in each section with featuredSize:"large" gets the tall hero card.
+  Gender values in products.json:
+    "womens" → Women's section only
+    "mens"   → Men's section only
+    "kids"   → Kids section only
+    "all"    → Women's AND Men's (not Kids)
 
   TO ADD A NEW PRODUCT: edit products.json only. No code changes needed here.
 -->
 <script>
-  /* Build one product card's HTML */
   function buildCard(p, isLarge) {
     const price = p.salePrice || p.price;
     const priceHTML = p.salePrice
@@ -585,10 +598,16 @@
       .map((s, i) => `<button class="size-btn${i===0?' active':''}">${s}</button>`)
       .join('');
 
+    // Sale badge overlay
+    const badgeHTML = p.badge
+      ? `<div style="position:absolute;top:12px;left:12px;background:var(--lime);color:var(--black);font-family:'Space Mono',monospace;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 8px;z-index:4;">${p.badge}</div>`
+      : '';
+
     return `
       <div class="product-card${isLarge ? ' large' : ''}">
-        <a href="product.html?id=${p.id}" style="display:block;${p.imageBack ? 'position:relative;' : ''}">
+        <a href="product.html?id=${p.id}" style="display:block;position:relative;">
           ${imgBlock}
+          ${badgeHTML}
         </a>
         <div class="product-overlay">
           <div class="product-tag">${p.tag || ''}</div>
@@ -613,13 +632,11 @@
       </div>`;
   }
 
-  /* Render a filtered list of products into a grid element */
   function renderSection(gridEl, products) {
     if (!products.length) {
-      gridEl.innerHTML = '<p style="color:#666;padding:40px;grid-column:1/-1;font-size:11px;letter-spacing:2px;">No products in this section yet.</p>';
+      gridEl.innerHTML = '<p style="color:#666;padding:40px;grid-column:1/-1;font-size:11px;letter-spacing:2px;">Coming soon.</p>';
       return;
     }
-    // Only the first product with featuredSize:"large" gets the tall card
     let usedLarge = false;
     gridEl.innerHTML = products.map(p => {
       const isLarge = !usedLarge && p.featuredSize === 'large';
@@ -634,14 +651,12 @@
       const raw = await res.json();
       const all = raw.filter(p => p.id);
 
-      const womens = all.filter(p => p.gender === 'womens' || p.gender === 'all');
-      const mens   = all.filter(p => p.gender === 'mens'   || p.gender === 'all');
-
-      renderSection(document.getElementById('grid-womens'), womens);
-      renderSection(document.getElementById('grid-mens'),   mens);
+      renderSection(document.getElementById('grid-womens'), all.filter(p => p.gender === 'womens' || p.gender === 'all'));
+      renderSection(document.getElementById('grid-mens'),   all.filter(p => p.gender === 'mens'   || p.gender === 'all'));
+      renderSection(document.getElementById('grid-kids'),   all.filter(p => p.gender === 'kids'));
 
     } catch(err) {
-      ['grid-womens','grid-mens'].forEach(id => {
+      ['grid-womens','grid-mens','grid-kids'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = '<p style="color:#666;padding:40px;grid-column:1/-1;">Could not load products. Make sure products.json is in the same folder.</p>';
       });
